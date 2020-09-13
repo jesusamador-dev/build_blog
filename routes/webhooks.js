@@ -1,25 +1,40 @@
 const express = require('express');
-// const cors = require('cors');
-// const axios = require('axios');
-// const corsOptions = { origin: "http://admin.jesusamador.com" };
+const bodyParser = require('body-parser');
+const { config } = require('../config/index');
+const cors = require('cors');
+const axios = require('axios');
+const corsOptions = { origin: "https://admin.jesusamador.com" };
 
 const webHooks = (app) => {
     const router = express.Router();
-    // app.use(cors(corsOptions));
+    app.use(cors(corsOptions));
+    app.use(bodyParser.urlencoded({ extended: false }));
+    app.use(bodyParser.json());
     app.use('/api/webhooks', router);
-
-    router.post('/published', (req, res, next) => {
+    const apiTravis = axios.create({
+        baseURL: ' https://api.travis-ci.com/repo/jesusamador-dev%2Famador_gatsby/requests',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Travis-API-Version': '3',
+            'Authorization': `token ${config.travisId}`
+        }
+    });
+    const body = {
+        "request": {
+            "branch": "master",
+            "message": "Actualizando posts"
+        }
+    }
+    router.post('/published', async(req, res, next) => {
         try {
-            if (req.body.post.current.previous.status === 'published') {
-                res.status(200).json({
-                    message: "success"
-                })
+            const request = await apiTravis('/', {
+                data: body
+            });
 
-            } else {
-                res.status(200).json({
-                    message: "not success"
-                })
-            }
+            res.status(200).json({
+                message: "success"
+            })
         } catch (e) {
             next(e)
         }
