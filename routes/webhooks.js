@@ -8,10 +8,21 @@ const webHooks = (app) => {
     app.use(cors(corsOptions));
     app.use('/api/webhooks', router);
 
-    router.post('/published', (req, res) => {
-        res.status(200).json({
-            "message": "success"
-        })
+    router.post('/published', (req, res, next) => {
+        try {
+            if (req.body.post.current.previous.status === 'published') {
+                res.status(200).json({
+                    message: "success"
+                })
+
+            } else {
+                res.status(200).json({
+                    message: "not success"
+                })
+            }
+        } catch (e) {
+            next(e)
+        }
     })
 
     router.get('/published', (req, res) => {
