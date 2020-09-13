@@ -1,11 +1,19 @@
 const express = require('express');
+const cors = require('cors');
+
+const corsOptions = { origin: "http://admin.jesusamador.com" };
 
 const webHooks = (app) => {
     const router = express.Router();
-    app.user('/api/webhook', router);
+    app.use(cors(corsOptions));
+    app.use('/api/webhooks', router);
 
     router.post('/published', (req, res) => {
+        res.send('Servidor funcionando');
+    })
 
+    router.get('/published', (req, res) => {
+        res.send('Servidor funcionando');
     })
 }
 

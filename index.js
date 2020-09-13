@@ -7,5 +7,5 @@ const webHooks = require('./routes/webhooks');
 webHooks(app);
 
 app.listen(config.port, () => {
-    console.log(`Server encendido`)
+    console.log(`http://localhost:${config.port}`)
 })
