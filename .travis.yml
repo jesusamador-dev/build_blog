@@ -22,10 +22,10 @@ env:
   - PORT=8080
 
 before_install:
-  - openssl aes-256-cbc -K $encrypted_e6cc0fb2b8da_key -iv $encrypted_e6cc0fb2b8da_iv
-  -in travis.enc -out travis -d
-  - chmod 600 travis
-  - mv travis ~/.ssh/id_rsa
+- openssl aes-256-cbc -K $encrypted_e6cc0fb2b8da_key -iv $encrypted_e6cc0fb2b8da_iv
+-in travis.enc -out travis -d
+- chmod 600 travis
+- mv travis ~/.ssh/id_rsa
 install: 
 before_script: 
 script:
