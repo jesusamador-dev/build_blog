@@ -11,29 +11,32 @@ const webHooks = (app) => {
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
     app.use('/api/webhooks', router);
-    const apiTravis = axios.create({
-        baseURL: ' https://api.travis-ci.com/repo/jesusamador-dev%2Famador_gatsby/requests',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Travis-API-Version': '3',
-            'Authorization': `token ${config.travisId}`
-        }
-    });
-    const body = {
-        "request": {
-            "branch": "master",
-            "message": "Actualizando posts"
-        }
-    }
+
     router.post('/published', async(req, res, next) => {
         try {
-            const request = await apiTravis('/', {
-                data: body
+            const instance = axios.create({
+                method: 'post',
+                baseURL: 'https://api.travis-ci.com/repo/jesusamador-dev%2Famador_gatsby',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Travis-API-Version': '3',
+                    'Authorization': `token ${config.travisId}`
+                },
+                body: {
+                    request: {
+                        branch: "master",
+                        message: "Actualizando posts"
+                    }
+                }
             });
 
+            const request = await instance.post('/requests');
+            // console.log(request)
+            const requestJson = request.data;
             res.status(200).json({
-                message: "success"
+                message: "success",
+                data: requestJson
             })
         } catch (e) {
             next(e)
@@ -41,7 +44,8 @@ const webHooks = (app) => {
     })
 
     router.get('/published', (req, res) => {
-        res.send('Servidor funcionando');
+        console.log(req)
+        res.json(JSON.stringify(req));
     })
 }
 
